@@ -1,5 +1,6 @@
 import mongoose , {Schema} from "mongoose";
-import bcrypt, { hash } from 'bcrypt'
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken"
 
 const userSchema = new Schema ( {
     userName : {
@@ -18,7 +19,6 @@ const userSchema = new Schema ( {
         type : String,
         required : [true , "password is required"],
         minlength : [8 , "minimum length is 8"],
-        select : false
     },
     phoneNumber : {
         type : String,
@@ -39,21 +39,29 @@ const userSchema = new Schema ( {
     },
     address : [
         {strret : String} , {country :String },{postalcode : String} , {district : String}
-    ]
+    ],
+    refreshToken : {
+        type : String,
+    },
 },{
     timestamps : true
 })
 
-             //the plane passwors modifielsd hash password
-userSchema.pre("save" , async function (next){
+    //the plane passwors modifielsd hash password
+userSchema.pre("save" , async function(next){
     if(this.isModified("password")){
-        this.password =  await bcrypt.hash(this.password , 10)
-        next()
+        this.password = await bcrypt.hash(this.password , 10);
+        next();
     }else{
-        return next()
+        return next();
     }
-})
-
+});            
+         
+             //the compare password and hash password
+userSchema.methods.isPasswordCorrect = async function(password) {
+    return await bcrypt.compare( password , this.password);
+};
+         
                   //generator access token
 userSchema.methods.generatorAccessToken = async function(){
    const accesstoken = jwt.sign({_id : this._id , email : this.email , userName : this.userName}, process.env.GENERATE_ACCESSTOKEN_SECRET, 
