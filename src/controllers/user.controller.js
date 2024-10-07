@@ -3,7 +3,10 @@ import { mail } from "../utils/sendMail.js";
 import { varification } from "../utils/emailText.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
+import { sendVerified } from "../utils/sendVerifiedSms.js";
 
+
+                    // generator Access And Refreshtoken
 const generatorAccessAndRefreshtoken = async (user) =>{
     try {
         const accessToken = await user.generatorAccessToken();
@@ -18,7 +21,7 @@ const generatorAccessAndRefreshtoken = async (user) =>{
         
     }
 }
-
+            //user register
 const register = async (req ,res) => {
     try {
         const { userName , email , password ,phoneNumber} = req.body;
@@ -48,8 +51,6 @@ const register = async (req ,res) => {
             });
         };
 
-        await mail( createUser.email , "varification" ,"hello" ,varification())
-
         res.status(200).json({
             message : createUser,
             status : 200
@@ -61,7 +62,7 @@ const register = async (req ,res) => {
     };
 };
 
-
+                    //user login
 const login = async (req , res) =>{
     try {
         const {email , password} = req.body;
@@ -88,6 +89,10 @@ const login = async (req , res) =>{
             httpOnly : true
         };
 
+        const link = await userFound.generatorAccessToken();
+
+        await mail( loginUser.email , "varification" ,"hello" ,varification(link));
+
         res.cookie("accessToken" , accessToken , options).cookie("refreshToken" , refreshToken , options).json(new ApiResponse (200 , "user login successfully" , {loginUser , accessToken}));
 
     } catch (error) {
@@ -95,4 +100,35 @@ const login = async (req , res) =>{
         res.status(400).json(new ApiError(400 , "login error" , error.message));
     };
 };
-export{register ,login}
+
+                    // user mail verified
+const emailVerified = async (req , res) => {
+    try {
+        const {link} = req.params;
+        const user = new User();
+        const result = await user.emailVerifiedToken (link);
+        
+        if(result){
+            const {email} = result;
+            const userFound = await User.findOne({email})
+
+            if (userFound) {
+                userFound.emailverified = "verified"
+                await userFound.save()
+                return res.send(sendVerified())
+            }else{
+                 return res.send("your email is invalied")
+            }
+        }else{
+            return res.send("invalied url")
+        }
+    } catch (error) {
+        console.log("email verify error" , error.message);
+    }
+}
+
+        // all controller export
+export{
+    register ,
+    login , 
+    emailVerified}
