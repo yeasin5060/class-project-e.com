@@ -91,8 +91,15 @@ const login = async (req , res) =>{
 
         const link = await userFound.generatorAccessToken();
 
-        await mail( loginUser.email , "varification" ,"hello" ,varification(link));
+        const userVerified = await User.findOne({emailVerified})
+        console.log(userVerified);
+        
 
+       /* if(userVerified){
+            await mail( loginUser.email , "varification" ,"hello" ,varification(link));
+        }else{
+            return res.status(400).json(new ApiError(400 , "user allredy verified"));
+        }*/
         res.cookie("accessToken" , accessToken , options).cookie("refreshToken" , refreshToken , options).json(new ApiResponse (200 , "user login successfully" , {loginUser , accessToken}));
 
     } catch (error) {
@@ -127,8 +134,41 @@ const emailVerified = async (req , res) => {
     }
 }
 
+                // forget password
+const forgetPassword = async (req, res) => {
+    try {
+        const {email , newpassword} = req.body;
+        if([email , newpassword].some((field) => field?.trim() === '')){
+            return res.status(400).json({
+                message : "all field require "
+            });
+        };
+
+        const user = await User.findOne({email});
+        if(!user){
+            return res.status(400).json(new ApiError(400 ,"invalied user"));
+        };
+
+
+        user.password = newpassword;
+        user.save({validationBeforeSave : false});
+
+        const updatePassword = await User.findById(user._id).select("-password");
+
+        res.status(200).json(new ApiResponse(200 , "forget password successfully" , updatePassword))
+    } catch (error) {
+        console.log("forget password error" , error.message);
+        
+    };
+};
+
+
+
+
         // all controller export
 export{
     register ,
     login , 
-    emailVerified}
+    emailVerified ,
+    forgetPassword
+}
