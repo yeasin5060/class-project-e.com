@@ -162,7 +162,14 @@ const forgetPassword = async (req, res) => {
     };
 };
 
-
+                //get user
+const getUser = async (req , res) => {
+    try {
+        
+    } catch (error) {
+        console.log("get user error" , error.message);
+    };
+};
 
 
         // all controller export
@@ -170,5 +177,6 @@ export{
     register ,
     login , 
     emailVerified ,
-    forgetPassword
+    forgetPassword,
+    getUser
 }
