@@ -1,24 +1,24 @@
-import { User } from "../models/user.models";
-import { ApiError } from "../utils/ApiError";
+import { User } from "../models/user.models.js";
+import { ApiError } from "../utils/ApiError.js";
 import jwt from "jsonwebtoken";
 
-const auth = async (req , res , next) => {
+export const auth = async (req , res , next) => {
     try {
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer " , "");
 
         if(!token){
-            return res.status(400).json(new ApiError(200 , "unauthorized access"));
+           return res.json(new ApiError(401 , "unauthorized access"));
         };
-
-        const decodedToken = jwt.verify(token , process.env.GENERATE_ACCESSTOKEN_SECRET);
-
-        if(!decodedToken){
-            return res.status(400).json(new ApiError(200 , "unauthorized access"));
-        }
-
-        const user = await User.findById(decodedToken._id);
+        const decodeToken = jwt.verify(token ,process.env.GENERATE_ACCESSTOKEN_SECRET);
+        
+        if(!decodeToken){
+            return res.json(new ApiError(402 , "unauthorized access"));
+        };
+        const user = await User.findById(decodeToken._id);
         req.user = user;
-        next()
+        //console.log(req.user);
+        
+        next();
     } catch (error) {
         console.log("auth middleware error" , error.message);
     }

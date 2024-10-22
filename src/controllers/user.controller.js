@@ -57,8 +57,7 @@ const register = async (req ,res) => {
         });
         
     } catch (error) {
-        console.log("register controller error" , error.message);
-        
+        console.log("register controller error" , error.message);  
     };
 };
 
@@ -93,8 +92,7 @@ const login = async (req , res) =>{
 
         const userVerified = await User.findOne({emailVerified})
         console.log(userVerified);
-        
-
+    
        /* if(userVerified){
             await mail( loginUser.email , "varification" ,"hello" ,varification(link));
         }else{
@@ -165,11 +163,37 @@ const forgetPassword = async (req, res) => {
                 //get user
 const getUser = async (req , res) => {
     try {
-        
+        const user = await req.user;
+        const getUser = await User.findById(user._id).select("-password");
+        return res.status(200).json(new ApiResponse (200 ,getUser , "get user sucessfully"));
     } catch (error) {
         console.log("get user error" , error.message);
     };
 };
+
+
+const logOut = async (req , res) => {
+    try {
+        await User.findByIdAndUpdate(req.user , {
+            $set : {
+                refreshToken : null
+            }
+        });
+
+        const logOutUser = await User.findById(req.user._id).select("-password");
+
+        let options = {
+            secure : true,
+            httpOnly : true
+        };
+
+        return res.clearCookie("accessToken" , options).clearCookie("refreshToken" , options).json(new ApiResponse(200 ,"user logout successfully" ,logOutUser));
+           
+    } catch (error) {
+        console.log("logout error" , error.message);
+        res.json(new ApiError(400 , "logout filed"));
+    }
+}
 
 
         // all controller export
@@ -178,5 +202,6 @@ export{
     login , 
     emailVerified ,
     forgetPassword,
-    getUser
+    getUser,
+    logOut
 }

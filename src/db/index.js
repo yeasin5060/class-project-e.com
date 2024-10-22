@@ -9,6 +9,5 @@ export const dbConnection = async () => {
         })
     } catch (error) {
         console.log("mongoodb connection error" , error);
-        
     }
 }
