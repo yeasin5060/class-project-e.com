@@ -14,7 +14,9 @@ app.use(cors({
 
         //import all routes
 import userRoute from './routes/user.route.js'
+import productRoute from './routes/product.route.js'
 
-app.use("/api/v1/user" ,userRoute)
+app.use("/api/v1/user" ,userRoute);
+app.use("/api/v1" ,productRoute);
 
 export {app}
