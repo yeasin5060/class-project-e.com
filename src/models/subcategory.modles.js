@@ -3,11 +3,11 @@ import mongoose , {Schema} from "mongoose";
 const subcategorySchema = new Schema({
     name : {
         type : String,
-        required : ture
+        required : true
     },
     slug : {
         type : String,
-        required : ture,
+        required : true,
         unique : true
     },
     category : {

@@ -16,9 +16,11 @@ app.use(cors({
 import userRoute from './routes/user.route.js';
 import productRoute from './routes/product.route.js';
 import categoryRoute from './routes/category.routes.js';
+import subCategoryRoute from './routes/subcategory.routes.js'
 
 app.use("/api/v1/user" ,userRoute);
 app.use("/api/v1" ,productRoute);
 app.use("/api/v1" ,categoryRoute);
+app.use("/api/v1" ,subCategoryRoute);
 
 export {app}
