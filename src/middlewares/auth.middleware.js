@@ -17,7 +17,6 @@ export const auth = async (req , res , next) => {
         const user = await User.findById(decodeToken._id);
         req.user = user;
         //console.log(req.user);
-        
         next();
     } catch (error) {
         console.log("auth middleware error" , error.message);

@@ -13,10 +13,12 @@ app.use(cors({
 }))
 
         //import all routes
-import userRoute from './routes/user.route.js'
-import productRoute from './routes/product.route.js'
+import userRoute from './routes/user.route.js';
+import productRoute from './routes/product.route.js';
+import categoryRoute from './routes/category.routes.js';
 
 app.use("/api/v1/user" ,userRoute);
 app.use("/api/v1" ,productRoute);
+app.use("/api/v1" ,categoryRoute);
 
 export {app}

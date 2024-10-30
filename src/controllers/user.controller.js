@@ -195,6 +195,35 @@ const logOut = async (req , res) => {
     }
 }
 
+const userRole = async ( req , res) => {
+    try {
+        const {role} = req.body;
+
+        if(role == ''){
+            return res.json(new ApiError(400 , "role field is require"))
+        }
+
+        const user = await User.findById(req.user._id);
+
+        if(!user){
+            return res.json(new ApiError(400 , "invelied user"))
+        }
+
+        if(user.role == "user" && user.role == "seller"){
+            return res.json(new ApiError(400 , "access denied"))
+        }
+
+        user.role = role;
+
+        await user.save({validationBeforeSave : false});
+        
+        return res.json(new ApiResponse(200 , "role create successfully" , user))
+       
+    } catch (error) {
+        console.log("user role error", error.message);
+    }
+}
+
 
         // all controller export
 export{
@@ -203,5 +232,6 @@ export{
     emailVerified ,
     forgetPassword,
     getUser,
-    logOut
+    logOut,
+    userRole
 }

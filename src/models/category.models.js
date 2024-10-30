@@ -3,17 +3,19 @@ import mongoose , {Schema} from "mongoose";
 const categorySchema = new Schema({
     name : {
         type : String,
-        required : ture
+        required : true
     },
     slug : {
         type : String,
-        required : ture,
+        required : true,
         unique : true
     },
-    subcategory : {
-        type : Schema.Types.ObjectId,
-        ref : "subCategory"
-    }
+    subcategory : [
+        {
+            type : Schema.Types.ObjectId,
+            ref : "subCategory"
+        }
+    ]
 },{
     timestamps : true
 });
