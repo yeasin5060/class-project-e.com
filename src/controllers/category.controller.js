@@ -27,4 +27,13 @@ const category = async (req, res) => {
     }
 }
 
-export {category}
+const allCategory  = async (_ , res) => {
+    try {
+        const data = await Category.find().populate("subcategory");
+        res.json(new ApiResponse(200, "get all category",data));
+    } catch (error) {
+        console.log("all category error" , error.message);
+    }
+}
+
+export {category,allCategory}
