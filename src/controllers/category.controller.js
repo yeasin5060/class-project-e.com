@@ -13,14 +13,18 @@ const category = async (req, res) => {
         let newSlug ;
 
         if(!slug){
-            newSlug = name.replaceAll(" " ,"-").toLowerCase()
+            newSlug = name.replaceAll(" " ,"-").toLowerCase();
         }else{
-           newSlug = slug.replaceAll(" " ,"-").toLowerCase()
+            const isSlug = await Category.findOne({slug});
+            if(isSlug){
+                return jes.json(new ApiError(400 , "slug must be unique"));
+            }
+            newSlug = slug.replaceAll(" " ,"-").toLowerCase();
         }
 
         const category = await Category.create({name : name , slug : newSlug});
 
-        return res.json(new ApiResponse(200 , "product create is database" , category))
+        return res.json(new ApiResponse(200 , "product create is database" , category));
 
     } catch (error) {
         console.log("category error" , error.message);

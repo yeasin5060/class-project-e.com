@@ -30,6 +30,9 @@ const userSchema = new Schema ( {
         type :String,
         date : new Date()
     },
+    publicId : {
+        type : String
+    },
     role : {
         type : String,
         enum : ["user" , "admin" , "seller" , "editor"],

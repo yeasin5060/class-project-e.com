@@ -1,5 +1,6 @@
 import { Category } from "../models/category.models.js";
 import { Subcategory } from "../models/subcategory.modles.js";
+import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const subCategory = async (req, res) => {
@@ -15,6 +16,10 @@ const subCategory = async (req, res) => {
         if(!slug){
             newSlug = name.replaceAll(" " ,"-").toLowerCase();
         }else{
+            const isSlug = await Subcategory.findOne({slug})
+            if(isSlug){
+                return res.json(new ApiError(400 , "slug must be unique"))
+            }
            newSlug = slug.replaceAll(" " ,"-").toLowerCase();
         };
 

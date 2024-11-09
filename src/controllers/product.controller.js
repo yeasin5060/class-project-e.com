@@ -10,21 +10,29 @@ const product = async (req , res) => {
             return res.json(new ApiError(400 , "title , category , subcategory is require"));
         };
 
-        const {thumbnail , gallery} = req.file
+        const {thumbnail , gallery} = req.file;
 
-        if(!thumbnail){
-            return res.json(new ApiError(400 , "thumbnail is require"))
+        if(!thumbnail ,gallery){
+            return res.json(new ApiError(400 , "thumbnail and gallery is require"));
         }
         let newSlug ;
         if(!slug){
-            newSlug = title.replaceAll(" " , "-").toLowerCass() + new Date.now()
+            newSlug = title.replaceAll(" " , "-").toLowerCass() + new Date.now();
         }else{
             const isSlugUnique = await Product.find({slug})
-            if(!isSlugUnique){
-                return res.json(new ApiError(400 , "slug is require"))
+            if(isSlugUnique){
+                return res.json(new ApiError(400 , "slug must be unique"));
             };
-            newSlug = isSlugUnique.replaceAll(" ","-").toLowerCass() + new Date.now()
+            newSlug = isSlugUnique.replaceAll(" ","-").toLowerCass() + new Date.now();
         };
+
+
+        const product = new Product;
+        product.title = title;
+        product.category = category;
+        product.subcategory = subcategory;
+        product.slug = newSlug;
+        await product.save()
     } catch (error) {
         console.log("product controller error" , error.message);
     };
