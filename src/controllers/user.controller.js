@@ -4,6 +4,8 @@ import { varification } from "../utils/emailText.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { sendVerified } from "../utils/sendVerifiedSms.js";
+import { cloudinaryFileUpload } from "../utils/clodinary.js";
+import { json } from "express";
 
 
                     // generator Access And Refreshtoken
@@ -224,6 +226,22 @@ const userRole = async ( req , res) => {
     }
 }
 
+const userUpdate = async (req ,res) => {
+    try {
+       if(req.file){
+        const {path} = req.file;
+        const user = await User.findOne(req.user._id)
+        const result = await cloudinaryFileUpload(path, user.userName , "profilePic");
+        user.profilePic = result.optimizeUrl;
+        user.publicId = result.uploadResult.public_id;
+        await user.save()
+        return res.json(new ApiResponse(200, "update profile succesfully",user))
+       }
+    } catch (error) {
+        console.log("update profile error" , error.message);
+    };
+};
+
 
         // all controller export
 export{
@@ -233,5 +251,6 @@ export{
     forgetPassword,
     getUser,
     logOut,
+    userUpdate,
     userRole
 }

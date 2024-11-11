@@ -33,6 +33,9 @@ const userSchema = new Schema ( {
     publicId : {
         type : String
     },
+    profilePic : {
+        type : String
+    },
     role : {
         type : String,
         enum : ["user" , "admin" , "seller" , "editor"],
@@ -49,7 +52,7 @@ const userSchema = new Schema ( {
     },
 },{
     timestamps : true
-})
+});
 
     //the plane passwors modifielsd hash password
 userSchema.pre("save" , async function(next){
@@ -75,7 +78,7 @@ userSchema.methods.generatorAccessToken = async function(){
 
                     //generator refresh token
 userSchema.methods.generatorRefreshToken = async function () {
-    const refreshtoken = jwt.sign({_id : this._id , email : this.email},process.env.GENERATE_REFRESHTOKEN_SECRET,{
+    const refreshtoken = jwt.sign({_id : this._id , email : this.email,userName : this.userName},process.env.GENERATE_REFRESHTOKEN_SECRET,{
         expiresIn :process.env.REFRESHTOKEN_EXPIRY
     });
     return refreshtoken;
@@ -86,8 +89,6 @@ userSchema.methods.emailVerifiedToken =  function (token) {
         if (err) {
             return err
         }
-        console.log(decode);
-        
         return decoded
       });
     
