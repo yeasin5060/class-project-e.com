@@ -12,19 +12,31 @@ const productSchema = new Schema ({
         unique : true
     },
     thumbnail : {
-        type : String,
+        publicId : {
+            type : String,
+        },
+        imagePath : {
+            type : String,
+        }
     },
     gallery: [
-        {
-            type : String, 
+       {
+        publicId : {
+            type : String,
+            required : true
+        },
+        imagePath : {
+            type : String,
+            required : true
         }
+       }
     ],
     category : {
         type : Schema.Types.ObjectId,
         ref : "Category"
     },
     subcategory : {
-         type : Schema.Types.ObjectId,
+        type : Schema.Types.ObjectId,
         ref : "Subcategory"
     },
     inventory : [

@@ -242,7 +242,6 @@ const userUpdate = async (req ,res) => {
     };
 };
 
-
         // all controller export
 export{
     register ,
